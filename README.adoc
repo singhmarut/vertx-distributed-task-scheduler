@@ -1,17 +1,15 @@
-= Vert.x Spring-vertx example project
+= Vert.x Spring-vertx Distributed Task Queue
 
-This project is a demo of exposing Spring-hosted service beans (and therefore Spring-wired services) via vert.x
-verticles. In vert.x 3 it's perfectly possible to share an application context between multiple verticles.
+This project is a demo of producer consumer pattern via vert.x verticles and vert.x cluster. A producer program keeps a list of task and worker programs
+keep sending request for task to be assigned. When workers finishes processing task it requests for another one.
+Any number of instances of workers can be created.
 
-In this case the service bean we expose through vert.x is a trivial data access service running through Spring Data
-JPA (and using Hibernate). In effect we're taking advantage of the ease of building data access via Spring/Hibernate
-but using vert.x as the connector between external clients and the Spring context.
-
-Note that because we're doing blocking JDBC access, we host the call to the service within an executeBlocking call, to
+Note that because workers are doing blocking  assuming task processing will take lot of time,
+ the processing happens within an executeBlocking call, to
 avoid blocking the event bus.
 
 You can run it directly in your IDE by creating a run configuration that uses the main class
-`io.vertx.examples.spring.SpringExampleRunner`.
+`io.vertx.examples.spring.DistributedTaskProcessor`.
 
 The pom.xml uses the Maven shade plugin to assemble the application and all it's dependencies into a single "fat" jar.
 
@@ -21,7 +19,7 @@ To build a "fat jar"
 
 To run the fat jar:
 
-    java -jar target/spring-example-3.2.1-fat.jar
+    java -jar target/vertx-distributed-task-processor-1.0.jar
 
 (You can take that jar and run it anywhere there is a Java 8+ JDK. It contains all the dependencies it needs so you
 don't need to install Vert.x on the target machine).
